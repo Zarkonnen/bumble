@@ -1,1 +1,12 @@
-Hello World
+<html><head><title>{{entry.title}}</title></head>
+
+<body><h1>{{entry.title}}</h1>{{entry.content}}
+
+<ul>
+{% for d in descendents %}
+    <li>{{d.title}}</li>
+{% endfor %}
+</ul>
+
+
+</body></html>
