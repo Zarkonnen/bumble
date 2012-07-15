@@ -1,6 +1,8 @@
+{% load tags %}
+
 <html><head><title>{{entry.title}}</title></head>
 
-<body><h1>{{entry.title}}</h1>{{entry.content}}
+<body><h1>{{entry.title}}</h1>{{entry.lead|filepaths}} {{entry.content|filepaths}}
 
 <ul>
 {% for d in descendents %}

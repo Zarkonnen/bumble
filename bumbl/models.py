@@ -1,13 +1,24 @@
 from django.db import models
 
+class File(models.Model):
+    name = models.CharField(max_length=1000)
+    f = models.FileField(upload_to="uploads")
+
+class Tag(models.Model):
+    name = models.CharField(max_length=1000)
+    def __unicode__(self):
+        return self.name
+
 class Entry(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=1000)
     slug = models.SlugField(blank=True)
     css = models.TextField(blank=True)
+    lead = models.TextField(blank=True)
     content = models.TextField(blank=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
     path = models.TextField(blank=True)
+    tags = models.ManyToManyField(Tag, blank=True, related_name="entries")
     def save(self, *args, **kwargs):
         self.path = self.calculate_path()
         super(Entry, self).save(*args, **kwargs)
@@ -24,4 +35,4 @@ class Entry(models.Model):
         return self.title
     class Meta:
         verbose_name_plural = "entries"
-    
+
