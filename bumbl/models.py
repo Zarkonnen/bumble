@@ -3,6 +3,8 @@ from django.db import models
 class File(models.Model):
     name = models.CharField(max_length=1000)
     f = models.FileField(upload_to="uploads")
+    def __unicode__(self):
+        return self.name
 
 class Tag(models.Model):
     name = models.CharField(max_length=1000)
