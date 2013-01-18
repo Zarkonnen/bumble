@@ -17,3 +17,10 @@ def filepaths(value):
     return re.sub(r'\{\{f:([^}]*)\}\}', dosub, value)
 
 register.filter("filepaths", filepaths)
+
+def urlify_path(path):
+	if path == "":
+		return ""
+	return path[1:]
+
+register.filter("urlify_path", urlify_path)

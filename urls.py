@@ -22,4 +22,4 @@ if settings.DEBUG:
                             (r'^%s(?P<path>.*)$' % settings.MEDIA_URL, 'django.views.static.serve', {'document_root' : settings.MEDIA_ROOT}))
 
 urlpatterns += patterns('',
-                        url(r'^', include('bumble.bumbl.urls')))
+                        (r'^', include('bumble.bumbl.urls')))

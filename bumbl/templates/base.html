@@ -6,7 +6,7 @@
 
 <ul>
 {% for d in descendents %}
-    <li>{{d.title}}</li>
+    <li><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}">{{d.title}}</a><br>{{d.lead|filepaths}}</li>
 {% endfor %}
 </ul>
 

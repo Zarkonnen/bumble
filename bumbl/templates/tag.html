@@ -1,10 +1,12 @@
+{% load tags %}
+
 <html><head><title>{{tag}}</title></head>
 
 <body><h1>{{tag}}</h1>
 
 <ul>
 {% for e in entries %}
-    <li>{{e.title}}</li>
+    <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths}}</li>
 {% endfor %}
 </ul>
 

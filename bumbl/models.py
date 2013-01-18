@@ -33,6 +33,11 @@ class Entry(models.Model):
             l.append(e.slug)
             e = e.parent
         return "/".join(l[::-1])
+	@property
+	def url_path(self):
+		if self.path == "":
+			return ""
+		return self.path[1:]
     def __unicode__(self):
         return self.title
     class Meta:
