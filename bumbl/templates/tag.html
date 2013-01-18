@@ -6,7 +6,7 @@
 
 <ul>
 {% for e in entries %}
-    <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths}}</li>
+    <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths|safe}}</li>
 {% endfor %}
 </ul>
 
