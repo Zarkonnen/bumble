@@ -4,6 +4,9 @@ from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
 from bumble.bumbl.templatetags.tags import urlify_path
 from django.http import HttpResponse
+from bumble.bumbl.settings import PAGINATION
+import json
+from django.conf import settings
 
 def tag_filter(tags, objects):
 	if len(tags) == 0:
@@ -36,7 +39,15 @@ def entry(request, path):
 		return HttpResponse(feed.writeString("UTF-8"))
     if "/tag/" in path:
         path, tags = path.split("/tag/")
-        return render_to_response('tag.html', {'tags':tags.split("+"), "entries":get_tag_entries(tags.split("+"), path)})
-    return render_to_response('base.html', {'entry':get_object_or_404(Entry, path=path), 'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")})
+        return render_to_response('tag.html', {'media':settings.MEDIA_URL, 'tags':tags.split("+"), "entries":get_tag_entries(tags.split("+"), path)[0:PAGINATION]})
+    return render_to_response('base.html', {'media':settings.MEDIA_URL, 'entry':get_object_or_404(Entry, path=path), 'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION]})
 
-
+def page(request, from_index, path):
+	entries = []
+	if "/tag/" in path:
+		path, tags = path.split("/tag/")
+		entries = get_tag_entries(tags.split("+"), path)
+	else:
+		entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
+	entries = entries[int(from_index):int(from_index) + PAGINATION]
+	return HttpResponse(json.dumps([{"title": e.title, "description": e.lead, "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))

@@ -1,6 +1,7 @@
 {% load tags %}
+<!DOCTYPE html>
 
-<html><head><title>{{entry.title}}</title></head>
+<html><head><title>{{entry.title}}</title><script type="text/javascript" src="{{media}}jquery.js"></script></head>
 
 <body><h1>{{entry.title}}</h1>{{entry.lead|filepaths|safe}} {{entry.content|filepaths|safe}}
 
@@ -10,5 +11,14 @@
 {% endfor %}
 </ul>
 
+<script type="text/javascript">
+$(document).ready(function() {
+	$(window).scroll(function () {
+		if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+			alert($(window).scrollTop() + '/' + $(document).height() + '/' + $(window).height());
+		}
+	});
+});
+</script>
 
 </body></html>
