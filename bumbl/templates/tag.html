@@ -1,8 +1,8 @@
 {% load tags %}
 
-<html><head><title>{{tag}}</title></head>
+<html><head><title>{% for t in tags %}{{t}} {% endfor %}</title></head>
 
-<body><h1>{{tag}}</h1>
+<body><h1>{% for t in tags %}{{t}} {% endfor %}</h1>
 
 <ul>
 {% for e in entries %}
