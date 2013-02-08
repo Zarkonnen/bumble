@@ -8,6 +8,7 @@ from bumble.bumbl.settings import PAGINATION
 import json
 from django.conf import settings
 from django.utils.html import escape
+from bumble.bumbl.templatetags.tags import filepaths
 
 def tag_filter(tags, objects):
 	if len(tags) == 0:
@@ -51,4 +52,4 @@ def page(request, from_index, path):
 	else:
 		entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
 	entries = entries[int(from_index):int(from_index) + PAGINATION]
-	return HttpResponse(json.dumps([{"title": escape(e.title), "description": e.lead, "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
+	return HttpResponse(json.dumps([{"title": escape(e.title), "description": filepaths(e.lead), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
