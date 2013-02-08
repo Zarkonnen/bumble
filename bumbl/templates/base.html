@@ -5,17 +5,48 @@
 
 <body><h1>{{entry.title}}</h1>{{entry.lead|filepaths|safe}} {{entry.content|filepaths|safe}}
 
-<ul>
+<ul id="descendents-list">
 {% for d in descendents %}
     <li><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}">{{d.title}}</a><br>{{d.lead|filepaths|safe}}</li>
 {% endfor %}
 </ul>
 
 <script type="text/javascript">
+var pagination_url = "{{pagination_url}}";
+var current_page = 0;
+var loading_page = false;
+var loading_broken = false;
+
+function load_more() {
+	loading_page = true;
+	current_page ++;
+	var page_url = pagination_url.replace("578329023", current_page);
+	$.ajax(/*page_url*/"http://www.fruchtenhammer666.ch", {
+		"dataType":"json",
+		"success":function(data) {
+			data.forEach(function(e) {
+				$('#descendents-list').append("<li><a href=\"" + e.link + "\">" + e.title + "</a><br>" + e.description + "</li>");
+			});
+			loading_page = false;
+		},
+		"error": function() {
+			$('#descendents-list').append("<li id=\"loading_failed\">Loading failed. <span id=\"loading_failed_retry\" onclick=\"retry_loading()\">Retry</span></li>");
+			loading_broken = true;
+			loading_page = false;
+		}
+	});
+}
+
+function retry_loading() {
+	$('#loading_failed').remove();
+	loading_broken = false;
+	load_more();
+}
+
 $(document).ready(function() {
 	$(window).scroll(function () {
-		if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
-			alert($(window).scrollTop() + '/' + $(document).height() + '/' + $(window).height());
+		if (!loading_broken && !loading_page && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+			load_more();
 		}
 	});
 });
