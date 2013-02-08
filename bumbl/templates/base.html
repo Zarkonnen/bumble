@@ -21,7 +21,7 @@ function load_more() {
 	loading_page = true;
 	current_page ++;
 	var page_url = pagination_url.replace("578329023", current_page);
-	$.ajax(/*page_url*/"http://www.fruchtenhammer666.ch", {
+	$.ajax(page_url, {
 		"dataType":"json",
 		"success":function(data) {
 			data.forEach(function(e) {
