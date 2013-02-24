@@ -21,6 +21,7 @@ var pagination_url = "{{pagination_url}}";
 var current_page = 0;
 var loading_page = false;
 var loading_broken = false;
+var loading_all_done = false;
 var loading_spinner = null;
 
 function load_more() {
@@ -56,6 +57,7 @@ function load_more() {
 				$('#descendents-list').append("<li><a href=\"" + e.link + "\">" + e.title + "</a><br>" + e.description + "</li>");
 			});
 			loading_page = false;
+			loading_all_done = data.length == 0;
 		},
 		"error": function() {
 			loading_spinner.stop();
@@ -74,7 +76,7 @@ function retry_loading() {
 
 $(document).ready(function() {
 	$(window).scroll(function () {
-		if (!loading_broken && !loading_page && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+		if (!loading_broken && !loading_all_done && !loading_page && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
 			load_more();
 		}
 	});
