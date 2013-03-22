@@ -1,14 +1,14 @@
+{% extends "base.html" %}
 {% load tags %}
 
-<html><head><title>{% for t in tags %}{{t}} {% endfor %}</title></head>
+{% block title %}{% for t in tags %}{{t}} {% endfor %}{% endblock %}
 
-<body><h1>{% for t in tags %}{{t}} {% endfor %}</h1>
+{% block pageTitle %}{% for t in tags %}{{t}} {% endfor %}{% endblock %}
 
-<ul>
-{% for e in entries %}
-    <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths|safe}}</li>
-{% endfor %}
-</ul>
+{% block content %}{% endblock %}
 
-
-</body></html>
+{% block descendents %}
+    {% for e in entries %}
+        <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths|safe}}</li>
+    {% endfor %}
+{% endblock %}
