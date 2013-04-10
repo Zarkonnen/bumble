@@ -18,7 +18,7 @@ class Entry(models.Model):
     css = models.TextField(blank=True)
     total_css = models.TextField(blank=True)
     lead = models.TextField(blank=True)
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=True, help_text="""Use *** to denote text for markdown.<br>Use {{f:filename}} to get the path of a file.""")
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
     path = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="entries")

@@ -2,6 +2,7 @@ from django import template
 import re
 from bumble.bumbl.models import File
 from bumble import settings
+import markdown
 
 register = template.Library()
 
@@ -17,6 +18,13 @@ def filepaths(value):
     return re.sub(r'\{\{f:([^}]*)\}\}', dosub, value)
 
 register.filter("filepaths", filepaths)
+
+def md(value):
+    def dosub(match):
+        return markdown.markdown(match.group(1))
+    return re.sub(r'\*\*\*(([^*]|(\*[^*])|(\*\*[^*]))*)\*\*\*', dosub, value)
+
+register.filter("md", md)
 
 def urlify_path(path):
 	if path == "":

@@ -7,10 +7,10 @@
 
 {% block pageTitle %}{{entry.title}}{% endblock %}
 
-{% block content %}{{entry.lead|filepaths|safe}} {{entry.content|filepaths|safe}}{% endblock %}
+{% block content %}{{entry.lead|filepaths|md|safe}} {{entry.content|filepaths|md|safe}}{% endblock %}
 
 {% block descendents %}
     {% for d in descendents %}
-		<li><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}">{{d.title}}</a><br>{{d.lead|filepaths|safe}}</li>
+		<li><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}">{{d.title}}</a><br>{{d.lead|filepaths|md|safe}}</li>
 	{% endfor %}
 {% endblock %}
