@@ -11,6 +11,6 @@
 
 {% block descendents %}
     {% for e in entries %}
-        <li><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}">{{e.title}}</a><br>{{e.lead|filepaths|md|safe}}</li>
+        <li class="descendent"><a href="{% url bumble.bumbl.views.entry e.path|urlify_path %}" class="descendent-link">{{e.title}}</a><span class="descendent-lead">{{e.lead|filepaths|md|safe}}</span></li>
     {% endfor %}
 {% endblock %}

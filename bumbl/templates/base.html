@@ -11,7 +11,7 @@
     </head>
 
     <body>
-        <h1>{% block pageTitle %}{% endblock %}</h1>
+        <h1 id="page-title">{% block pageTitle %}{% endblock %}</h1>
         {% block content %}{% endblock %}
 
         <div id="descendents">
@@ -62,7 +62,7 @@
 		            "success":function(data) {
 			            loading_spinner.stop();
 			            data.forEach(function(e) {
-				            $('#descendents-list').append("<li><a href=\"" + e.link + "\">" + e.title + "</a><br>" + e.description + "</li>");
+				            $('#descendents-list').append("<li class=\"descendent\"><a href=\"" + e.link + "\" class=\"descendent-link\">" + e.title + "</a><span class=\"descendent-lead\">" + e.description + "</span></li>");
 			            });
 			            loading_page = false;
 			            loading_all_done = data.length == 0;
