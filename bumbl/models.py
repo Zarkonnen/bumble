@@ -16,6 +16,7 @@ class Entry(models.Model):
     title = models.CharField(max_length=1000)
     slug = models.SlugField(blank=True)
     css = models.TextField(blank=True)
+    total_css = models.TextField(blank=True)
     lead = models.TextField(blank=True)
     content = models.TextField(blank=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
@@ -23,6 +24,7 @@ class Entry(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, related_name="entries")
     def save(self, *args, **kwargs):
         self.path = self.calculate_path()
+        self.total_css = self.calculate_total_css()
         super(Entry, self).save(*args, **kwargs)
         for c in self.children.all():
             c.save()
@@ -33,6 +35,13 @@ class Entry(models.Model):
             l.append(e.slug)
             e = e.parent
         return "/".join(l[::-1])
+    def calculate_total_css(self):
+        l = [self.css]
+        e = self.parent
+        while e:
+            l.append(e.css)
+            e = e.parent
+        return "\n\n".join(l[::-1])
 	@property
 	def url_path(self):
 		if self.path == "":

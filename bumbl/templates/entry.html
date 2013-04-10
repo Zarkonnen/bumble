@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load tags %}
 
+{% block css %}{{entry.total_css|filepaths|safe}}{% endblock %}
+
 {% block title %}{{entry.title}}{% endblock %}
 
 {% block pageTitle %}{{entry.title}}{% endblock %}

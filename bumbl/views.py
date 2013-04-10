@@ -41,7 +41,7 @@ def entry(request, path):
         return HttpResponse(feed.writeString("UTF-8"))
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
-        return render_to_response('tag.html', {'media':settings.MEDIA_URL, 'tags':tags.split("+"), "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION], 'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)])})
+        return render_to_response('tag.html', {'media':settings.MEDIA_URL, 'entry':get_object_or_404(Entry, path=entry_path), 'tags':tags.split("+"), "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION], 'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)])})
     return render_to_response('entry.html', {'media':settings.MEDIA_URL, 'entry':get_object_or_404(Entry, path=path), 'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION], 'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)])})
 
 def page(request, from_index, path):
