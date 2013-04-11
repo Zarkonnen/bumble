@@ -8,7 +8,10 @@ register = template.Library()
 
 def filepaths(value):
     def dosub(match):
-        f = File.objects.get(name=match.group(1))
+        try:
+            f = File.objects.get(name=match.group(1))
+        except File.DoesNotExist:
+            return ""
         if f == None:
             return ""
         if settings.DEBUG:
