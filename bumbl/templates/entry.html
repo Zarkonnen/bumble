@@ -11,8 +11,12 @@
     {% if entry.parent %}
         <a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
     {% endif %}
-    {{entry.lead|filepaths|md|safe}}
-    {{entry.content|filepaths|md|safe}}
+    <div id="lead">
+        {{entry.lead|filepaths|md|safe}}
+    </div>
+    <div id="content">
+        {{entry.content|filepaths|md|safe}}
+    </div>
 {% endblock %}
 
 {% block descendents %}

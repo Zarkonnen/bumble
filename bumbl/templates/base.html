@@ -11,14 +11,18 @@
     </head>
 
     <body>
-        <h1 id="page-title">{% block pageTitle %}{% endblock %}</h1>
-        {% block content %}{% endblock %}
+        <div id="page">
+            <h1 id="page-title">{% block pageTitle %}{% endblock %}</h1>
+            <div id="all-content">
+                {% block content %}{% endblock %}
+            </div>
 
-        <div id="descendents">
-    	    <ul id="descendents-list">
-    	    {% block descendents %}{% endblock %}
-    	    </ul>
-    	    <div id="descendents-spinner"></div>
+            <div id="descendents">
+        	    <ul id="descendents-list">
+        	    {% block descendents %}{% endblock %}
+        	    </ul>
+        	    <div id="descendents-spinner"></div>
+            </div>
         </div>
 
         <script type="text/javascript">
