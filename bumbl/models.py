@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class File(models.Model):
     name = models.CharField(max_length=1000)
@@ -22,6 +23,12 @@ class Entry(models.Model):
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
     path = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="entries")
+    def clean(self):
+        e = self.parent
+        while e:
+            if e == self:
+                raise ValidationError('An entry cannot be its own ancestor.')
+            e = e.parent
     def save(self, *args, **kwargs):
         self.path = self.calculate_path()
         self.total_css = self.calculate_total_css()
