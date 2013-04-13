@@ -20,6 +20,11 @@
     <div id="content">
         {{entry.content|filepaths|md|safe}}
     </div>
+    <ul id="tags">
+        {% for t in entry.tags.all %}
+            <li class="tag"><a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}/tag/{{t.name}}/">{{t.name}}</a></li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
 {% block descendents %}
