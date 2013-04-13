@@ -56,4 +56,4 @@ def page(request, from_index, path):
     else:
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
-    return HttpResponse(json.dumps([{"title": escape(e.title), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
+    return HttpResponse(json.dumps([{"title": escape(e.title), "created": e.created, "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))

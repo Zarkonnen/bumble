@@ -11,6 +11,9 @@
     {% if entry.parent %}
         <a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
     {% endif %}
+    <div id="date">
+        {{entry.created}}
+    </div>
     <div id="lead">
         {{entry.lead|filepaths|md|safe}}
     </div>
@@ -21,6 +24,6 @@
 
 {% block descendents %}
     {% for d in descendents %}
-		<li class="descendent"><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}" class="descendent-link">{{d.title}}</a><span class="descendent-lead">{{d.lead|filepaths|md|safe}}</span></li>
+		<li class="descendent"><a href="{% url bumble.bumbl.views.entry d.path|urlify_path %}" class="descendent-link">{{d.title}}<span class="descendent-date">{{d.created}}</span></a><span class="descendent-lead">{{d.lead|filepaths|md|safe}}</span></li>
 	{% endfor %}
 {% endblock %}
