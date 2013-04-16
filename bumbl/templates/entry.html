@@ -25,6 +25,11 @@
             <li class="tag"><a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}/tag/{{t.name}}/">{{t.name}}</a></li>
         {% endfor %}
     </ul>
+    <ul id="comments">
+        {% for c in entry.comments.all %}
+            <li class="comment"><span class="commenter">{{c.commenter}}</span><span class="comment-date">{{c.created}}</span><span class="comment-text">{{c.text}}</span></li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
 {% block descendents %}

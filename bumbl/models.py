@@ -12,6 +12,16 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
+class Comment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    commenter = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254)
+    ip = models.CharField(max_length=100)
+    text = models.CharField(max_length=5000)
+    entry = models.ForeignKey("Entry")
+    def __unicode__(self):
+        return self.commenter + ": " + self.text[:100]
+
 class Entry(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=1000)

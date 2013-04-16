@@ -1,4 +1,4 @@
-from bumble.bumbl.models import Entry, Tag, File
+from bumble.bumbl.models import Entry, Tag, File, Comment
 from django.contrib import admin
 
 class EntryAdmin(admin.ModelAdmin):
@@ -7,3 +7,4 @@ class EntryAdmin(admin.ModelAdmin):
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Tag)
 admin.site.register(File)
+admin.site.register(Comment)
