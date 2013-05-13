@@ -26,7 +26,7 @@
         {% endfor %}
     </ul>
     <ul id="comments">
-        {% for c in entry.comments.all %}
+        {% for c in entry.comment_set.all %}
             <li class="comment"><span class="commenter">{{c.commenter}}</span><span class="comment-date">{{c.created}}</span><span class="comment-text">{{c.text}}</span></li>
         {% endfor %}
     </ul>
