@@ -30,6 +30,10 @@
             <li class="comment"><span class="commenter">{{c.commenter}}</span><span class="comment-date">{{c.created}}</span><span class="comment-text">{{c.text}}</span></li>
         {% endfor %}
     </ul>
+    <form action="" method="post">{% csrf_token %}
+        {{ commentForm.as_p }}
+        <input type="submit" value="Add Comment" />
+    </form>
 {% endblock %}
 
 {% block descendents %}
