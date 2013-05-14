@@ -32,6 +32,12 @@
     </ul>
     <form action="" method="post">{% csrf_token %}
         {{ commentForm.as_p }}
+        <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptcha_key}}&error={{recaptcha_error}}"></script>
+        <noscript>
+            <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptcha_key}}&error={{recaptcha_error}}" height="300" width="500" frameborder="0"></iframe><br>
+            <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+            <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+        </noscript>
         <input type="submit" value="Add Comment" />
     </form>
 {% endblock %}
