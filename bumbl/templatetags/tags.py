@@ -35,3 +35,11 @@ def urlify_path(path):
 	return path[1:]
 
 register.filter("urlify_path", urlify_path)
+
+def ensure_trailing_slash(path):
+    if not path.endswith("/"):
+        return path + "/"
+    else:
+        return path
+
+register.filter("ensure_trailing_slash", ensure_trailing_slash)

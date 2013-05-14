@@ -2,13 +2,12 @@ from django.shortcuts import render_to_response, get_object_or_404
 from bumble.bumbl.models import Entry, Tag
 from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
-from bumble.bumbl.templatetags.tags import urlify_path
 from django.http import HttpResponse, HttpResponseRedirect
 from bumble.bumbl.settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
 import json
 from django.conf import settings
 from django.utils.html import escape
-from bumble.bumbl.templatetags.tags import filepaths, md
+from bumble.bumbl.templatetags.tags import filepaths, md, ensure_trailing_slash, urlify_path
 from bumble.bumbl.forms import CommentForm
 from django.core.context_processors import csrf
 import requests
@@ -44,7 +43,14 @@ def entry(request, path):
         return HttpResponse(feed.writeString("UTF-8"))
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
-        return render_to_response('tag.html', {'media':settings.MEDIA_URL, 'entry':get_object_or_404(Entry, path=entry_path), 'tags':tags.split("+"), "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION], 'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)])})
+        return render_to_response('tag.html', {
+            'media':settings.MEDIA_URL,
+            'entry':get_object_or_404(Entry, path=entry_path),
+            'tags':tags.split("+"),
+            "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
+            'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
+            'feed_url':ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(path)])) + "feed"
+        })
     e = get_object_or_404(Entry, path=path)
     recaptcha_error = None
     if request.method == "POST":
@@ -61,7 +67,16 @@ def entry(request, path):
                 return HttpResponseRedirect(request.path)
     else:
         form = CommentForm()
-    c = {'media':settings.MEDIA_URL, 'entry':e, 'commentForm': form, 'recaptcha_key': RECAPTCHA_PUBLIC, 'recaptcha_error': recaptcha_error, 'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION], 'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)])}
+    c = {
+        'media':settings.MEDIA_URL,
+        'entry':e,
+        'commentForm': form,
+        'recaptcha_key': RECAPTCHA_PUBLIC,
+        'recaptcha_error': recaptcha_error,
+        'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION],
+        'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
+        'feed_url':ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(path)])) + "feed"
+    }
     c.update(csrf(request))
     return render_to_response('entry.html', c)
 

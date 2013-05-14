@@ -3,9 +3,11 @@
 
 {% block css %}{{entry.total_css|filepaths|safe}}{% endblock %}
 
-{% block title %}{% for t in tags %}{{t}} {% endfor %}{% endblock %}
+{% block title %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
 
-{% block pageTitle %}{% for t in tags %}{{t}} {% endfor %}{% endblock %}
+{% block feedTitle %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
+
+{% block pageTitle %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
 
 {% block content %}{% endblock %}
 
