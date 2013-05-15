@@ -11,6 +11,7 @@ from bumble.bumbl.templatetags.tags import filepaths, md, ensure_trailing_slash,
 from bumble.bumbl.forms import CommentForm
 from django.core.context_processors import csrf
 import requests
+from django.utils import formats
 
 def tag_filter(tags, objects):
     if len(tags) == 0:
@@ -92,7 +93,7 @@ def page(request, from_index, path):
     else:
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
-    return HttpResponse(json.dumps([{"title": escape(e.title), "created": str(e.created), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
+    return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "SHORT_DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
 
 def verify_recaptcha(ip, challenge, response):
     r = requests.post("http://www.google.com/recaptcha/api/verify", {'privatekey': RECAPTCHA_PRIVATE, 'remoteip': ip, 'challenge': challenge, 'response': response})
