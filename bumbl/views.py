@@ -93,7 +93,7 @@ def page(request, from_index, path):
     else:
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
-    return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "SHORT_DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
+    return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
 
 def verify_recaptcha(ip, challenge, response):
     r = requests.post("http://www.google.com/recaptcha/api/verify", {'privatekey': RECAPTCHA_PRIVATE, 'remoteip': ip, 'challenge': challenge, 'response': response})
