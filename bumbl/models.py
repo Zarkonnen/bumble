@@ -33,6 +33,7 @@ class Entry(models.Model):
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
     path = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="entries")
+    commentsOn = models.BooleanField(default=True, help_text="""Check to allow new comments on a page. Existing comments will be displayed even when this is unchecked.""")
     def clean(self):
         e = self.parent
         while e:
