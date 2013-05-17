@@ -9,6 +9,12 @@
 
 {% block pageTitle %}{{entry.title}}{% endblock %}
 
+{% block head %}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{entry.title}}">
+    <meta name="twitter:description" content="{{entry.lead}}">
+{% endblock %}
+
 {% block content %}
     {% if entry.parent %}
         <a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
