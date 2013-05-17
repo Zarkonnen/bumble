@@ -27,6 +27,7 @@ class Entry(models.Model):
     title = models.CharField(max_length=1000)
     slug = models.SlugField(blank=True)
     css = models.TextField(blank=True)
+    local_css = models.TextField(blank=True)
     total_css = models.TextField(blank=True)
     lead = models.TextField(blank=True)
     content = models.TextField(blank=True, help_text="""Use *** to denote text for markdown.<br>Use {{f:filename}} to get the path of a file.""")
@@ -59,7 +60,7 @@ class Entry(models.Model):
         while e:
             l.append(e.css)
             e = e.parent
-        return "\n\n".join(l[::-1])
+        return "\n\n".join(l[::-1]) + "\n\n" + self.local_css
 	@property
 	def url_path(self):
 		if self.path == "":
