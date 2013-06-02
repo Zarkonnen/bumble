@@ -62,6 +62,8 @@ class Entry(models.Model):
             l.append(e.css)
             e = e.parent
         return "\n\n".join(l[::-1]) + "\n\n" + self.local_css
+    def sorted_comments(self):
+        return self.comment_set.order_by('created')
 	@property
 	def url_path(self):
 		if self.path == "":
