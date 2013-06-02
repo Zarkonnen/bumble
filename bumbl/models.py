@@ -74,3 +74,11 @@ class Entry(models.Model):
     class Meta:
         verbose_name_plural = "entries"
 
+class Redirect(models.Model):
+    redirect_from = models.CharField(max_length=1000, help_text="""Path format: starting slash, no trailing slash. Example: "/foo".""")
+    redirect_to = models.CharField(max_length=1000, help_text="""Path format: starting slash, no trailing slash. Example: "/foo".""")
+    permanent = models.BooleanField(default=True)
+    def __unicode__(self):
+        if self.permanent:
+            return self.redirect_from + " => " + self.redirect_to
+        return self.redirect_from + " -> " + self.redirect_to

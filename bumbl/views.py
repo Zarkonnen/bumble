@@ -1,5 +1,5 @@
-from django.shortcuts import render_to_response, get_object_or_404
-from bumble.bumbl.models import Entry, Tag
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from bumble.bumbl.models import Entry, Tag, Redirect
 from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -13,6 +13,13 @@ from django.core.context_processors import csrf
 import requests
 from django.utils import formats
 
+def normalize_path(path):
+    if path.endswith('/'):
+        path = path[:-1]
+    if path != '' and path[0] != '/':
+        path = '/' + path
+    return path
+
 def tag_filter(tags, objects):
     if len(tags) == 0:
         return objects
@@ -22,10 +29,13 @@ def get_tag_entries(tags, path):
     return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).order_by("-created")
 
 def entry(request, path):
-    if path.endswith('/'):
-        path = path[:-1]
-    if path != '':
-        path = '/' + path
+    try:
+        full_path = normalize_path(request.get_full_path())
+        redirection = Redirect.objects.get(redirect_from=full_path)
+        return redirect(reverse("bumble.bumbl.views.entry", args=[urlify_path(redirection.redirect_to)]), permanent=redirection.permanent)
+    except:
+        pass
+    path = normalize_path(path)
     if path.endswith("/feed"):
         path = path[0:-len("/feed")]
         if "/tag/" in path:
@@ -83,10 +93,7 @@ def entry(request, path):
 
 def page(request, from_index, path):
     entries = []
-    if path.endswith('/'):
-        path = path[:-1]
-    if path != '':
-        path = '/' + path
+    path = normalize_path(path)
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
         entries = get_tag_entries(tags.split("+"), entry_path)
