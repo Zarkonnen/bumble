@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+import datetime
 
 class File(models.Model):
     name = models.CharField(max_length=1000)
@@ -23,7 +24,7 @@ class Comment(models.Model):
         return self.commenter + ": " + self.text[:100]
 
 class Entry(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=datetime.datetime.now)
     title = models.CharField(max_length=1000)
     slug = models.SlugField(blank=True)
     css = models.TextField(blank=True)
