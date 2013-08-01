@@ -12,6 +12,7 @@ from bumble.bumbl.forms import CommentForm
 from django.core.context_processors import csrf
 import requests
 from django.utils import formats
+from django.core.mail import send_mail
 
 def normalize_path(path):
     if path.endswith('/'):
@@ -77,6 +78,7 @@ def entry(request, path):
                 new_comment.entry = e
                 new_comment.ip = request.META['REMOTE_ADDR']
                 new_comment.save()
+                send_mail("New comment by " + new_comment.commenter, "<html><body><a href=\"" + entry_url(path) + "\">" + new_comment.commenter + "</a><br>" + new_comment.text + "</body></html>", settings.DEFAULT_FROM_EMAIL, [a[1] for a in settings.ADMINS])
                 return HttpResponseRedirect(request.path)
     else:
         form = CommentForm()
