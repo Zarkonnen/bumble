@@ -39,7 +39,7 @@
     </ul>
     <ul id="comments">
         {% for c in entry.sorted_comments.all %}
-            <li class="comment"><span class="commenter">{{c.commenter}}</span><a href="{% url bumble.bumbl.views.entry entry.path|urlify_path %}#{{c.id}}" class="comment-date" title="{{c.id}}">{{c.created}}</a><span class="comment-text">{{c.text}}</span></li>
+            <li class="comment"><span class="commenter">{{c.commenter}}</span><a href="{% url bumble.bumbl.views.entry entry.path|urlify_path %}#{{c.id}}" class="comment-date" name="{{c.id}}">{{c.created}}</a><span class="comment-text">{{c.text}}</span></li>
         {% endfor %}
     </ul>
     {% if entry.commentsOn %}
