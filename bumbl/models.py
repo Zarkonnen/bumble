@@ -32,6 +32,8 @@ class Entry(models.Model):
     total_css = models.TextField(blank=True)
     lead = models.TextField(blank=True)
     content = models.TextField(blank=True, help_text="""Use *** to denote text for markdown.<br>Use {{f:filename}} to get the path of a file.""")
+    section_content = models.TextField(blank=True, help_text="""Included in all descendents. Use *** to denote text for markdown.<br>Use {{f:filename}} to get the path of a file.""")
+    total_section_content = models.TextField(blank=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children")
     path = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="entries")
@@ -45,6 +47,7 @@ class Entry(models.Model):
     def save(self, *args, **kwargs):
         self.path = self.calculate_path()
         self.total_css = self.calculate_total_css()
+        self.total_section_content = self.calculate_total_section_content()
         super(Entry, self).save(*args, **kwargs)
         for c in self.children.all():
             c.save()
@@ -62,6 +65,13 @@ class Entry(models.Model):
             l.append(e.css)
             e = e.parent
         return "\n\n".join(l[::-1]) + "\n\n" + self.local_css
+    def calculate_total_section_content(self):
+        l = [self.section_content]
+        e = self.parent
+        while e:
+            l.append(e.section_content)
+            e = e.parent
+        return "\n\n".join(l[::-1])
     def sorted_comments(self):
         return self.comment_set.order_by('created')
 	@property
