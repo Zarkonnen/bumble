@@ -39,18 +39,20 @@
     </ul>
     <ul id="comments">
         {% for c in entry.sorted_comments.all %}
-            <li class="comment"><span class="commenter">{{c.commenter}}</span><span class="comment-date">{{c.created}}</span><span class="comment-text">{{c.text}}</span></li>
+            <li class="comment"><span class="commenter">{{c.commenter}}</span><a href="{% url bumble.bumbl.views.entry entry.path|urlify_path %}#{{c.id}}" class="comment-date" title="{{c.id}}">{{c.created}}</a><span class="comment-text">{{c.text}}</span></li>
         {% endfor %}
     </ul>
     {% if entry.commentsOn %}
         <form action="" method="post" id="comment-form">{% csrf_token %}
             {{ commentForm.as_p }}
-            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptcha_key}}&error={{recaptcha_error}}"></script>
-            <noscript>
-                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptcha_key}}&error={{recaptcha_error}}" height="300" width="500" frameborder="0"></iframe><br>
-                <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-            </noscript>
+            <span id="captcha">
+                <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptcha_key}}&error={{recaptcha_error}}"></script>
+                <noscript>
+                    <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptcha_key}}&error={{recaptcha_error}}" height="300" width="500" frameborder="0"></iframe><br>
+                    <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+                    <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+                </noscript>
+            </span>
             <input type="submit" value="Add Comment" />
         </form>
     {% endif %}
