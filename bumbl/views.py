@@ -29,10 +29,12 @@ def get_tag_entries(tags, path):
     return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).order_by("-created")
 
 def entry(request, path):
+    def entry_url(p):
+        return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
     try:
         full_path = normalize_path(request.get_full_path())
         redirection = Redirect.objects.get(redirect_from=full_path)
-        return redirect(reverse("bumble.bumbl.views.entry", args=[urlify_path(redirection.redirect_to)]), permanent=redirection.permanent)
+        return redirect(link=entry_url(redirection.redirect_to), permanent=redirection.permanent)
     except:
         pass
     path = normalize_path(path)
@@ -41,16 +43,16 @@ def entry(request, path):
         if "/tag/" in path:
             path, tags = path.split("/tag/")
             entry = get_object_or_404(Entry, path=path)
-            feed = Atom1Feed(title=entry.title + ":" + tags, description=tags, link=reverse("bumble.bumbl.views.entry", args=[urlify_path(path)])+"/tag/"+tags)
+            feed = Atom1Feed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
-                feed.add_item(title=e.title, description=e.lead, link=reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)]))
+                feed.add_item(title=e.title, description=e.lead, link=entry_url(e.path))
             return HttpResponse(feed.writeString("UTF-8"))
         entry = get_object_or_404(Entry, path=path)
-        feed = Atom1Feed(title=entry.title, description=entry.lead, link=reverse("bumble.bumbl.views.entry", args=[urlify_path(path)]))
+        feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
         for e in entries:
-            feed.add_item(title=e.title, description=e.lead, link=reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)]))
+            feed.add_item(title=e.title, description=e.lead, link=entry_url(e.path))
         return HttpResponse(feed.writeString("UTF-8"))
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
@@ -60,7 +62,7 @@ def entry(request, path):
             'tags':tags.split("+"),
             "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
             'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
-            'feed_url':ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(path)])) + "feed"
+            'feed_url':entry_url(path) + "feed"
         })
     e = get_object_or_404(Entry, path=path)
     recaptcha_error = None
@@ -86,12 +88,14 @@ def entry(request, path):
         'recaptcha_error': recaptcha_error,
         'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION],
         'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
-        'feed_url':ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(path)])) + "feed"
+        'feed_url':entry_url(path) + "feed"
     }
     c.update(csrf(request))
     return render_to_response('entry.html', c)
 
 def page(request, from_index, path):
+    def entry_url(p):
+        return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
     entries = []
     path = normalize_path(path)
     if "/tag/" in path:
@@ -100,7 +104,7 @@ def page(request, from_index, path):
     else:
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
-    return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": reverse("bumble.bumbl.views.entry", args=[urlify_path(e.path)])} for e in entries]))
+    return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": entry_url(e.path)} for e in entries]))
 
 def verify_recaptcha(ip, challenge, response):
     r = requests.post("http://www.google.com/recaptcha/api/verify", {'privatekey': RECAPTCHA_PRIVATE, 'remoteip': ip, 'challenge': challenge, 'response': response})
