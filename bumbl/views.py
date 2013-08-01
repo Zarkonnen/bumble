@@ -47,13 +47,13 @@ def entry(request, path):
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
                 feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
-            return HttpResponse(feed.writeString("UTF-8"))
+            return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
         entry = get_object_or_404(Entry, path=path)
         feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
         entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
         for e in entries:
             feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
-        return HttpResponse(feed.writeString("UTF-8"))
+        return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
         return render_to_response('tag.html', {
