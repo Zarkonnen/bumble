@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from bumble.bumbl.models import Entry, Tag, Redirect
 from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from bumble.bumbl.settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
 import json
 from django.conf import settings
@@ -13,6 +13,7 @@ from django.core.context_processors import csrf
 import requests
 from django.utils import formats
 from django.core.mail import send_mail, mail_admins
+from datetime import datetime
 
 def normalize_path(path):
     if path.endswith('/'):
@@ -27,7 +28,13 @@ def tag_filter(tags, objects):
     return tag_filter(tags[1:], objects.filter(tags__name__exact=tags[0]))
 
 def get_tag_entries(tags, path):
-    return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).order_by("-created")
+    return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).filter(created__lte=datetime.now()).order_by("-created")
+
+def get_entry(path):
+    entry = get_object_or_404(Entry, path=path)
+    if entry.created > datetime.now():
+        raise Http404
+    return entry
 
 def entry(request, path):
     def entry_url(p):
@@ -43,29 +50,30 @@ def entry(request, path):
         path = path[0:-len("/feed")]
         if "/tag/" in path:
             path, tags = path.split("/tag/")
-            entry = get_object_or_404(Entry, path=path)
+            entry = get_entry(path)
             feed = Atom1Feed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
                 feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
-        entry = get_object_or_404(Entry, path=path)
+        entry = get_entry(path)
         feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
-        entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
+        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")
         for e in entries:
             feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
+        get_entry(entry_path) #Getting entry so it 404s if the entry is not published yet.
         return render_to_response('tag.html', {
             'media':settings.MEDIA_URL,
-            'entry':get_object_or_404(Entry, path=entry_path),
+            'entry':get_entry(path),
             'tags':tags.split("+"),
             "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
             'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
             'feed_url':entry_url(path) + "feed"
         })
-    e = get_object_or_404(Entry, path=path)
+    e = get_entry(path)
     recaptcha_error = None
     if request.method == "POST":
         form = CommentForm(request.POST)
@@ -88,7 +96,7 @@ def entry(request, path):
         'commentForm': form,
         'recaptcha_key': RECAPTCHA_PUBLIC,
         'recaptcha_error': recaptcha_error,
-        'descendents':Entry.objects.filter(path__startswith=path+'/').order_by("-created")[0:PAGINATION],
+        'descendents':Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")[0:PAGINATION],
         'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
         'feed_url':entry_url(path) + "feed"
     }
@@ -100,11 +108,12 @@ def page(request, from_index, path):
         return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
     entries = []
     path = normalize_path(path)
+    e = get_entry(path) #Getting entry so it 404s if the entry is not published yet.
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
         entries = get_tag_entries(tags.split("+"), entry_path)
     else:
-        entries = Entry.objects.filter(path__startswith=path+'/').order_by("-created")
+        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
     return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": entry_url(e.path)} for e in entries]))
 

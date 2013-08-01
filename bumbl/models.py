@@ -80,6 +80,8 @@ class Entry(models.Model):
 			return ""
 		return self.path[1:]
     def __unicode__(self):
+        if self.created > datetime.datetime.now():
+            return "SCHEDULED: " + str(self.created) + ": " + self.title
         return self.title
     class Meta:
         verbose_name_plural = "entries"
