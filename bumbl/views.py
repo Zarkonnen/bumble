@@ -64,10 +64,9 @@ def entry(request, path):
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
-        get_entry(entry_path) #Getting entry so it 404s if the entry is not published yet.
         return render_to_response('tag.html', {
             'media':settings.MEDIA_URL,
-            'entry':get_entry(path),
+            'entry':get_entry(entry_path),
             'tags':tags.split("+"),
             "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
             'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
@@ -108,7 +107,6 @@ def page(request, from_index, path):
         return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
     entries = []
     path = normalize_path(path)
-    e = get_entry(path) #Getting entry so it 404s if the entry is not published yet.
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
         entries = get_tag_entries(tags.split("+"), entry_path)
