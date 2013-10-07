@@ -9,7 +9,7 @@ A server with Apache, Python (and the ability to install Python packages) and a 
 ### Installation procedure
 * Download or clone Bumble into a suitable location on the server.
 * [Set up mod_wsgi](http://ericholscher.com/blog/2008/jul/8/setting-django-and-mod_wsgi/) to point to the Bumble install.
-* Using pip or easy_install, install the following python modules: [requests](http://docs.python-requests.org/en/latest/) and [markdown](https://pypi.python.org/pypi/Markdown/2.3.1).
+* Using pip, install the following python modules: [django](https://www.djangoproject.com/), [requests](http://docs.python-requests.org/en/latest/) and [markdown](https://pypi.python.org/pypi/Markdown/2.3.1).
 * You may also want to install [south](http://south.aeracode.org/) to handle future DB migrations.
 * Finally, edit settings.py and change the following things:
 * Add your name and email address to ADMINS.
