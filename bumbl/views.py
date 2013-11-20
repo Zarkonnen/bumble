@@ -93,14 +93,15 @@ def entry(request, path):
     else:
         form = CommentForm()
     c = {
-        'media':settings.MEDIA_URL,
-        'entry':e,
+        'media': settings.MEDIA_URL,
+        'entry': e,
         'commentForm': form,
         'recaptcha_key': RECAPTCHA_PUBLIC,
         'recaptcha_error': recaptcha_error,
-        'descendents':Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")[0:PAGINATION],
-        'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
-        'feed_url':entry_url(path) + "feed"
+        'descendents': Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")[0:PAGINATION],
+        'pagination_url': reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
+        'feed_url': entry_url(path) + "feed",
+        'user': request.user
     }
     c.update(csrf(request))
     return render_to_response('entry.html', c)

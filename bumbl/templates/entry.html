@@ -19,6 +19,9 @@
 {% endblock %}
 
 {% block content %}
+    {% if user.is_staff %}
+        <a href="{% url admin:bumbl_entry_change entry.id %}" class="edit-link">Edit</a>
+    {% endif %}
     {% if entry.parent %}
         <a href="{% url bumble.bumbl.views.entry entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
     {% endif %}
