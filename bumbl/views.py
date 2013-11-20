@@ -76,7 +76,10 @@ def entry(request, path):
     recaptcha_error = None
     if request.method == "POST":
         form = CommentForm(request.POST)
-        recaptcha_result = verify_recaptcha(request.META['REMOTE_ADDR'], request.POST['recaptcha_challenge_field'], request.POST['recaptcha_response_field'])
+        try:
+            recaptcha_result = verify_recaptcha(request.META['REMOTE_ADDR'], request.POST['recaptcha_challenge_field'], request.POST['recaptcha_response_field'])
+        except:
+            return HttpResponseForbidden()
         if not recaptcha_result[0]:
             recaptcha_error = recaptcha_result[1]
         else:
