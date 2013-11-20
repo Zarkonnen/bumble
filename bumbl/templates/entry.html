@@ -12,7 +12,10 @@
 {% block head %}
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{entry.title}}">
-    <meta name="twitter:description" content="{{entry.lead}}">
+    <meta name="twitter:description" content="{{entry.lead|md|striptags}}">
+    {% if entry.lead|thumb %}
+        <meta name="twitter:image" content="{{entry.lead|thumb}}">
+    {% endif %}
 {% endblock %}
 
 {% block content %}

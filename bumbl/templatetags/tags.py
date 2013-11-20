@@ -43,3 +43,13 @@ def ensure_trailing_slash(path):
         return path
 
 register.filter("ensure_trailing_slash", ensure_trailing_slash)
+
+def thumb(text):
+    text = md(filepaths(text))
+    match = re.search("img src=\"([^\"]+)\"", text)
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+register.filter("thumb", thumb)
