@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import datetime
+from hashlib import sha256
+from django.conf import settings
 
 class File(models.Model):
     name = models.CharField(max_length=1000)
@@ -79,6 +81,12 @@ class Entry(models.Model):
 		if self.path == "":
 			return ""
 		return self.path[1:]
+    @property
+    def magic_number(self):
+        return sha256(self.path + settings.SECRET_KEY).hexdigest()
+    @property
+    def preview_path(self):
+        return self.path + "?preview=" + self.magic_number
     def __unicode__(self):
         if self.created > datetime.datetime.now():
             return "SCHEDULED: " + str(self.created) + ": " + self.title

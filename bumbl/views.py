@@ -30,9 +30,9 @@ def tag_filter(tags, objects):
 def get_tag_entries(tags, path):
     return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).filter(created__lte=datetime.now()).order_by("-created")
 
-def get_entry(path):
+def get_entry(path, request):
     entry = get_object_or_404(Entry, path=path)
-    if entry.created > datetime.now():
+    if entry.created > datetime.now() and not ("preview" in request.GET and request.GET["preview"] == entry.magic_number):
         raise Http404
     return entry
 
@@ -50,13 +50,13 @@ def entry(request, path):
         path = path[0:-len("/feed")]
         if "/tag/" in path:
             path, tags = path.split("/tag/")
-            entry = get_entry(path)
+            entry = get_entry(path, request)
             feed = Atom1Feed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
                 feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
-        entry = get_entry(path)
+        entry = get_entry(path, request)
         feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
         entries = Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")
         for e in entries:
@@ -66,13 +66,13 @@ def entry(request, path):
         entry_path, tags = path.split("/tag/")
         return render_to_response('tag.html', {
             'media':settings.MEDIA_URL,
-            'entry':get_entry(entry_path),
+            'entry':get_entry(entry_path, request),
             'tags':tags.split("+"),
             "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
             'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
             'feed_url':entry_url(path) + "feed"
         })
-    e = get_entry(path)
+    e = get_entry(path, request)
     recaptcha_error = None
     if request.method == "POST":
         form = CommentForm(request.POST)
