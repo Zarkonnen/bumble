@@ -2,5 +2,5 @@
 {% load tags %}
 
 {% block content %}
-<a href="{% url bumble.bumbl.views.entry original.preview_path|urlify_path %}" target="_blank">View</a>{{ block.super }}
+<a href="{% url 'bumble.bumbl.views.entry' original.preview_path|urlify_path %}" target="_blank">View</a>{{ block.super }}
 {% endblock %}
