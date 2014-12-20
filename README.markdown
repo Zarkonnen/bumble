@@ -3,20 +3,21 @@ Bumble is a blogging engine a bit similar to tumblr, but with the ability to cre
 # Documentation
 First off, these docs are almost certainly not as complete and helpful as they could me. Feel free to [drop me a line](mailto:david.stark@zarkonnen.com) if you are struggling with setup or have suggestions for improving the docs.
 
+This version of Bumble was developed against Python 3.4 and Django 1.7.
+
 ## Installation
 ### Requirements
-A server with Apache, Python (and the ability to install Python packages) and a database. SQLite will do in a pinch. Git is a plus. We've done some installs on [Webfaction](https://www.webfaction.com/), but anyplace that satisfies the above requirements will do.
+A server with Apache, Python 3 (and the ability to install Python packages) and a database. SQLite will do in a pinch. Git is a plus. We've done some installs on [Webfaction](https://www.webfaction.com/), but anyplace that satisfies the above requirements will do.
 ### Installation procedure
 * Download or clone Bumble into a suitable location on the server.
 * [Set up mod_wsgi](http://ericholscher.com/blog/2008/jul/8/setting-django-and-mod_wsgi/) to point to the Bumble install.
 * Using pip, install the following python modules: [django](https://www.djangoproject.com/), [requests](http://docs.python-requests.org/en/latest/) and [markdown](https://pypi.python.org/pypi/Markdown/2.3.1).
-* You may also want to install [south](http://south.aeracode.org/) to handle future DB migrations.
 * Finally, edit settings.py and change the following things:
 * Add your name and email address to ADMINS.
 * Fill in the DB connection details in DATABASES.
 * Set the appropriate timezone if you're not in Chicago.
-* Set MEDIA_URL to `"static/bumble/media/"`.
-* Set STATIC_ROOT to `"<webroot-path>/static"`, e.g `"/var/www/static/"`
+* Set STATIC_ROOT to `"<webroot-path>/static/"`, e.g `"/var/www/static/"`
+* Set MEDIA_ROOT to `"<webroot-path>/static/media/"`, e.g `"/var/www/static/media/"`
 * Change SECRET_KEY to something else - you can use [this tool](http://www.miniwebtool.com/django-secret-key-generator/) to make a valid new key
 * Then, export the following environment variables:
 * `export DJANGO_SETTINGS_MODULE=bumble.settings`

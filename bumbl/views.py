@@ -13,7 +13,7 @@ from django.core.context_processors import csrf
 import requests
 from django.utils import formats
 from django.core.mail import send_mail, mail_admins
-from datetime import datetime
+from django.utils.timezone import now
 
 def normalize_path(path):
     if path.endswith('/'):
@@ -28,11 +28,11 @@ def tag_filter(tags, objects):
     return tag_filter(tags[1:], objects.filter(tags__name__exact=tags[0]))
 
 def get_tag_entries(tags, path):
-    return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).filter(created__lte=datetime.now()).order_by("-created")
+    return tag_filter(tags, Entry.objects.filter(path__startswith=path+'/')).filter(created__lte=now()).order_by("-created")
 
 def get_entry(path, request):
     entry = get_object_or_404(Entry, path=path)
-    if entry.created > datetime.now() and not ("preview" in request.GET and request.GET["preview"] == entry.magic_number):
+    if entry.created > now() and not ("preview" in request.GET and request.GET["preview"] == entry.magic_number):
         raise Http404
     return entry
 
@@ -58,7 +58,7 @@ def entry(request, path):
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
         entry = get_entry(path, request)
         feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
-        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")
+        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
         for e in entries:
             feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
@@ -98,7 +98,7 @@ def entry(request, path):
         'commentForm': form,
         'recaptcha_key': RECAPTCHA_PUBLIC,
         'recaptcha_error': recaptcha_error,
-        'descendents': Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")[0:PAGINATION],
+        'descendents': Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")[0:PAGINATION],
         'pagination_url': reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
         'feed_url': entry_url(path) + "feed",
         'user': request.user
@@ -115,7 +115,7 @@ def page(request, from_index, path):
         entry_path, tags = path.split("/tag/")
         entries = get_tag_entries(tags.split("+"), entry_path)
     else:
-        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=datetime.now()).order_by("-created")
+        entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
     return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": entry_url(e.path)} for e in entries]))
 

@@ -14,8 +14,6 @@ def filepaths(value):
             return ""
         if f == None:
             return ""
-        if settings.DEBUG:
-            return "http://localhost:8000/" + settings.MEDIA_URL + f.f.name
         else:
             return settings.MEDIA_URL + f.f.name
     return re.sub(r'\{\{f:([^}]*)\}\}', dosub, value)
