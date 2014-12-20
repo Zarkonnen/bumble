@@ -84,10 +84,13 @@ class Entry(models.Model):
         return self.path[1:]
     @property
     def magic_number(self):
-        return sha256(self.path + settings.SECRET_KEY).hexdigest()
+        return sha256((self.path + settings.SECRET_KEY).encode('utf-8')).hexdigest()
     @property
-    def preview_path(self):
-        return self.path + "?preview=" + self.magic_number
+    def preview_postfix(self):
+        if self.created > now():
+            return "?preview=" + self.magic_number
+        else:
+            return ""
     def __str__(self):
         if self.created > now():
             return "SCHEDULED: " + str(self.created) + ": " + self.title
