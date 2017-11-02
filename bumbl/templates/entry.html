@@ -30,11 +30,11 @@
         {{entry.created}}
     </div>
     <div id="lead">
-        {{entry.lead|filepaths|md|safe}}
+        {{entry.lead|filepaths|tagslist|md|safe}}
     </div>
     <div id="content">
-        {{entry.total_section_content|filepaths|md|safe}}
-        {{entry.content|filepaths|md|safe}}
+        {{entry.total_section_content|filepaths|tagslist|md|safe}}
+        {{entry.content|filepaths|tagslist|md|safe}}
     </div>
     <ul id="tags">
         {% for t in entry.tags.all %}
@@ -63,6 +63,6 @@
 
 {% block descendents %}
     {% for d in descendents %}
-		<li class="descendent"><a href="{% url 'bumble.bumbl.views.entry' d.path|urlify_path %}" class="descendent-link">{{d.title}}<span class="descendent-date">{{d.created}}</span></a><span class="descendent-lead">{{d.lead|filepaths|md|safe}}</span></li>
+		<li class="descendent"><a href="{% url 'bumble.bumbl.views.entry' d.path|urlify_path %}" class="descendent-link">{{d.title}}<span class="descendent-date">{{d.created}}</span></a><span class="descendent-lead">{{d.lead|filepaths|tagslist|md|safe}}</span></li>
 	{% endfor %}
 {% endblock %}

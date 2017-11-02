@@ -20,6 +20,8 @@ class Tag(models.Model):
         if self.title:
             return self.title
         return self.name
+    def num_members(self):
+        return len(self.entries.all())
     def __str__(self):
         return self.name
 

@@ -74,7 +74,7 @@ In addition, there is a "section content" field, which contains HTML / markdown 
 You can upload files to Bumble by creating Files in the admin interface. To refer to a file in HTML or markdown, use the syntax `{{f:name_of_file}}`, which is automatically substituted with the full path of the file. So you can upload a file called "kittens.jpg" as "kittens" and use `<img src="{{f:kittens}}">` to display it.
 
 ### Tags
-You can create tags and add entries to them, allowing people to browse your site by tags.
+You can create tags and add entries to them, allowing people to browse your site by tags. In HTML or markdown, use the syntax `{{tagslist}}` to insert a list of tags sorted by popularity.
 
 ### RSS
 Each bumble entry and tag page links to an appropriate RSS feed to follow that topic.
