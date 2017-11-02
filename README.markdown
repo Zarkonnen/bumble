@@ -8,23 +8,32 @@ This version of Bumble was developed against Python 3.4 and Django 1.7.
 ## Installation
 ### Requirements
 A server with Apache, Python 3 (and the ability to install Python packages) and a database. SQLite will do in a pinch. Git is a plus. We've done some installs on [Webfaction](https://www.webfaction.com/), but anyplace that satisfies the above requirements will do.
-### Installation procedure
-* Download or clone Bumble into a suitable location on the server.
+
+### Development installation
+* Download or clone Bumble.
 * Initialise a virtual environment: `python3 -m venv venv`.
 * Install the required packages using pip: `pip install -r requirements.txt`.
+* Then, export the following environment variables:
+* `export DJANGO_SETTINGS_MODULE=bumble.settings`.
+* `export PYTHONPATH=$PYTHONPATH:<path-to-bumble-install>`.
+* Run `django-admin syncdb` to create the database, entering an admin username and password when prompted.
+* Run `django-admin runserver` to start the server.
+
+### Deployment
+* Download or clone Bumble into a suitable location on the server.
+* Install the required packages using pip: `pip install -r requirements.txt`.
 * [Set up mod_wsgi](http://ericholscher.com/blog/2008/jul/8/setting-django-and-mod_wsgi/) to point to the Bumble install.
-* Using pip, install the following python modules: [django](https://www.djangoproject.com/), [requests](http://docs.python-requests.org/en/latest/) and [markdown](https://pypi.python.org/pypi/Markdown/2.3.1).
-* Finally, edit settings.py and change the following things:
+* Edit settings.py and change the following things:
 * Add your name and email address to ADMINS.
 * Fill in the DB connection details in DATABASES.
-* Set the appropriate timezone if you're not in Chicago.
+* Set the appropriate timezone.
 * Set STATIC_ROOT to `"<webroot-path>/static/"`, e.g `"/var/www/static/"`
 * Set MEDIA_ROOT to `"<webroot-path>/static/media/"`, e.g `"/var/www/static/media/"`
 * Change SECRET_KEY to something else - you can use [this tool](http://www.miniwebtool.com/django-secret-key-generator/) to make a valid new key
 * Then, export the following environment variables:
 * `export DJANGO_SETTINGS_MODULE=bumble.settings`
 * `export PYTHONPATH=$PYTHONPATH:<path-to-bumble-install>`
-* Run `manage.py syncdb` to create the database, entering an admin username and password when prompted
+* Run `django-admin syncdb` to create the database, entering an admin username and password when prompted
 * Restart apache if needed
 
 ## Usage
