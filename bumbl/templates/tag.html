@@ -1,15 +1,41 @@
 {% extends "base.html" %}
 {% load tags %}
 
-{% block css %}{{entry.total_css|filepaths|safe}}{% endblock %}
+{% block css %}
+{{entry.total_css|filepaths|safe}}
+{{tag.css}}
+{% endblock %}
 
-{% block title %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
+{% block title %}
+{{entry.title}}:
+{% if tag %}
+    {{ tag.nice_title }}
+{% else %}
+    {% for t in tags %}{{t}} {% endfor %}
+{% endif %}
+{% endblock %}
 
-{% block feedTitle %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
+{% block feedTitle %}
+{{entry.title}}:
+{% if tag %}
+    {{ tag.nice_title }}
+{% else %}
+    {% for t in tags %}{{t}} {% endfor %}
+{% endif %}
+{% endblock %}
 
-{% block pageTitle %}{{entry.title}}: {% for t in tags %}{{t}} {% endfor %}{% endblock %}
+{% block pageTitle %}
+{{entry.title}}:
+{% if tag %}
+    {{ tag.nice_title }}
+{% else %}
+    {% for t in tags %}{{t}} {% endfor %}
+{% endif %}
+{% endblock %}
 
-{% block content %}{% endblock %}
+{% block content %}
+{{tag.content|filepaths|md|safe}}
+{% endblock %}
 
 {% block descendents %}
     {% for e in entries %}

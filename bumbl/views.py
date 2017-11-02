@@ -64,11 +64,16 @@ def entry(request, path):
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
+        tag_names = tags.split("+")
+        tag = None
+        if len(tag_names) == 1:
+            tag = get_object_or_404(Tag, name=tag_names[0])
         return render_to_response('tag.html', {
             'media':settings.MEDIA_URL,
             'entry':get_entry(entry_path, request),
-            'tags':tags.split("+"),
-            "entries":get_tag_entries(tags.split("+"), entry_path)[0:PAGINATION],
+            'tags':tag_names,
+            'tag': tag,
+            "entries":get_tag_entries(tag_names, entry_path)[0:PAGINATION],
             'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
             'feed_url':entry_url(path) + "feed"
         })

@@ -13,6 +13,13 @@ class File(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=1000)
+    title = models.CharField(max_length=1000, default="")
+    content = models.TextField(blank=True, default="", help_text="""Use *** to denote text for markdown.<br>Use {{f:filename}} to get the path of a file.""")
+    css = models.TextField(blank=True, default="")
+    def nice_title(self):
+        if self.title:
+            return self.title
+        return self.name
     def __str__(self):
         return self.name
 
