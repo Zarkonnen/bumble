@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from bumble.bumbl.models import Entry, Tag, Redirect
 from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from bumble.bumbl.settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
 import json
 from django.conf import settings
@@ -77,7 +77,7 @@ def entry(request, path):
     if request.method == "POST":
         form = CommentForm(request.POST)
         try:
-            recaptcha_result = verify_recaptcha(request.META['REMOTE_ADDR'], request.POST['recaptcha_challenge_field'], request.POST['recaptcha_response_field'])
+            recaptcha_result = verify_recaptcha(request.META['REMOTE_ADDR'], request.POST['g-recaptcha-response'])
         except:
             return HttpResponseForbidden()
         if not recaptcha_result[0]:
@@ -119,9 +119,9 @@ def page(request, from_index, path):
     entries = entries[int(from_index)*PAGINATION:int(from_index)*PAGINATION + PAGINATION]
     return HttpResponse(json.dumps([{"title": escape(e.title), "created": formats.date_format(e.created, "DATETIME_FORMAT"), "description": md(filepaths(e.lead)), "link": entry_url(e.path)} for e in entries]))
 
-def verify_recaptcha(ip, challenge, response):
-    r = requests.post("http://www.google.com/recaptcha/api/verify", {'privatekey': RECAPTCHA_PRIVATE, 'remoteip': ip, 'challenge': challenge, 'response': response})
-    if r.text.startswith("true"):
+def verify_recaptcha(ip, response):
+    r = requests.post("https://www.google.com/recaptcha/api/siteverify", {'secret': RECAPTCHA_PRIVATE, 'remoteip': ip, 'response': response})
+    if r.json()["success"]:
         return (True, None)
     else:
-        return (False, r.text.splitlines()[1])
+        return (False, "You may be a robot, sorry.")

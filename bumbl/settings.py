@@ -1,3 +1,6 @@
 PAGINATION = 25
-RECAPTCHA_PUBLIC = "6LfPXOESAAAAAPEVqh-0bz-67U426xiEbdQbQeIY"
-RECAPTCHA_PRIVATE = "6LfPXOESAAAAAECo7OuaqXNar7RnK1PhPHu379fS"
+
+# Register the site at https://www.google.com/recaptcha/admin to get these values.
+# Add localhost to the list of supported domains for the key if you want to use it for development.
+RECAPTCHA_PUBLIC = ""
+RECAPTCHA_PRIVATE = ""

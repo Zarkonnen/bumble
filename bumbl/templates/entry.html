@@ -16,6 +16,7 @@
     {% if entry.lead|thumb %}
         <meta name="twitter:image" content="{{entry.lead|thumb}}">
     {% endif %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
 
 {% block content %}
@@ -53,12 +54,7 @@
         <form action="" method="post" id="comment-form">{% csrf_token %}
             {{ commentForm.as_p }}
             <span id="captcha">
-                <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{recaptcha_key}}&error={{recaptcha_error}}"></script>
-                <noscript>
-                    <iframe src="http://www.google.com/recaptcha/api/noscript?k={{recaptcha_key}}&error={{recaptcha_error}}" height="300" width="500" frameborder="0"></iframe><br>
-                    <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-                    <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-                </noscript>
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha_key }}"></div>
             </span>
             <input type="submit" value="Add Comment" />
         </form>
