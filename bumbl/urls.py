@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from . import views
 
-urlpatterns = patterns('',
-    url(r'^__page/([0-9]+)/(.*)$', 'bumble.bumbl.views.page'),
-    url(r'^(.*)$', 'bumble.bumbl.views.entry')
-)
+urlpatterns = [
+    url(r'^__page/([0-9]+)/(.*)$', views.page, name="page"),
+    url(r'^(.*)$', views.entry, name="entry")
+]

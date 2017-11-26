@@ -1,4 +1,4 @@
-from bumble.bumbl.models import Entry, Tag, File, Comment, Redirect
+from .models import Entry, Tag, File, Comment, Redirect
 from django.contrib import admin
 
 class EntryAdmin(admin.ModelAdmin):

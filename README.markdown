@@ -14,8 +14,8 @@ A server with Apache, Python 3 (and the ability to install Python packages) and 
 * Initialise a virtual environment: `python3 -m venv venv`.
 * Install the required packages using pip: `pip install -r requirements.txt`.
 * Then, export the following environment variables:
-* `export DJANGO_SETTINGS_MODULE=bumble.settings`.
-* `export PYTHONPATH=$PYTHONPATH:<path-to-bumble-install>`.
+* `export DJANGO_SETTINGS_MODULE=bumble.settings`
+* `export PYTHONPATH=$PYTHONPATH:<path-to-bumble-install>`
 * Run `django-admin syncdb` to create the database, entering an admin username and password when prompted.
 * Run `django-admin runserver` to start the server.
 

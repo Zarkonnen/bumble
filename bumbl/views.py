@@ -1,15 +1,14 @@
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from bumble.bumbl.models import Entry, Tag, Redirect
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Entry, Tag, Redirect
 from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
-from bumble.bumbl.settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
+from .settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
 import json
 from django.conf import settings
 from django.utils.html import escape
-from bumble.bumbl.templatetags.tags import filepaths, md, ensure_trailing_slash, urlify_path
-from bumble.bumbl.forms import CommentForm
-from django.core.context_processors import csrf
+from .templatetags.tags import filepaths, md, ensure_trailing_slash, urlify_path
+from .forms import CommentForm
 import requests
 from django.utils import formats
 from django.core.mail import send_mail, mail_admins
@@ -38,7 +37,7 @@ def get_entry(path, request):
 
 def entry(request, path):
     def entry_url(p):
-        return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
+        return request.build_absolute_uri(ensure_trailing_slash(reverse("entry", args=[urlify_path(p)])))
     try:
         full_path = normalize_path(request.get_full_path())
         redirection = Redirect.objects.get(redirect_from=full_path)
@@ -68,13 +67,13 @@ def entry(request, path):
         tag = None
         if len(tag_names) == 1:
             tag = get_object_or_404(Tag, name=tag_names[0])
-        return render_to_response('tag.html', {
+        return render(request, 'tag.html', {
             'media':settings.MEDIA_URL,
             'entry':get_entry(entry_path, request),
             'tags':tag_names,
             'tag': tag,
             "entries":get_tag_entries(tag_names, entry_path)[0:PAGINATION],
-            'pagination_url':reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
+            'pagination_url':reverse("page", args=[578329023, urlify_path(path)]),
             'feed_url':entry_url(path) + "feed"
         })
     e = get_entry(path, request)
@@ -104,16 +103,15 @@ def entry(request, path):
         'recaptcha_key': RECAPTCHA_PUBLIC,
         'recaptcha_error': recaptcha_error,
         'descendents': Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")[0:PAGINATION],
-        'pagination_url': reverse("bumble.bumbl.views.page", args=[578329023, urlify_path(path)]),
+        'pagination_url': reverse("page", args=[578329023, urlify_path(path)]),
         'feed_url': entry_url(path) + "feed",
         'user': request.user
     }
-    c.update(csrf(request))
-    return render_to_response('entry.html', c)
+    return render(request, 'entry.html', c)
 
 def page(request, from_index, path):
     def entry_url(p):
-        return request.build_absolute_uri(ensure_trailing_slash(reverse("bumble.bumbl.views.entry", args=[urlify_path(p)])))
+        return request.build_absolute_uri(ensure_trailing_slash(reverse("entry", args=[urlify_path(p)])))
     entries = []
     path = normalize_path(path)
     if "/tag/" in path:
