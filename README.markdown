@@ -3,7 +3,7 @@ Bumble is a blogging engine a bit similar to tumblr, but with the ability to cre
 # Documentation
 First off, these docs are almost certainly not as complete and helpful as they could me. Feel free to [drop me a line](mailto:david.stark@zarkonnen.com) if you are struggling with setup or have suggestions for improving the docs.
 
-This version of Bumble was developed against Python 3.4 and Django 1.7.
+This version of Bumble was developed against Python 3.5 and Django 1.11.
 
 ## Installation
 ### Requirements
