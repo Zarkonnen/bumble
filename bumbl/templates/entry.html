@@ -24,7 +24,7 @@
         <a href="{% url 'admin:bumbl_entry_change' entry.id %}" class="edit-link">Edit</a>
     {% endif %}
     {% if entry.parent %}
-        <a href="{% url 'bumble.bumbl.views.entry' entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
+        <a href="{% url 'entry' entry.parent.path|urlify_path %}" class="parent-link">{{entry.parent.title}}</a>
     {% endif %}
     <div id="date">
         {{entry.created}}
@@ -39,15 +39,15 @@
     <ul id="tags">
         {% for t in entry.tags.all %}
             {% if entry.parent.path %}
-                <li class="tag"><a href="{% url 'bumble.bumbl.views.entry' entry.parent.path|urlify_path %}/tag/{{t.name}}">{{t.name}}</a></li>
+                <li class="tag"><a href="{% url 'entry' entry.parent.path|urlify_path %}/tag/{{t.name}}">{{t.name}}</a></li>
             {% else %}
-                <li class="tag"><a href="{% url 'bumble.bumbl.views.entry' entry.parent.path|urlify_path %}tag/{{t.name}}">{{t.name}}</a></li>
+                <li class="tag"><a href="{% url 'entry' entry.parent.path|urlify_path %}tag/{{t.name}}">{{t.name}}</a></li>
             {% endif %}
         {% endfor %}
     </ul>
     <ul id="comments">
         {% for c in entry.sorted_comments.all %}
-            <li class="comment"><span class="commenter">{{c.commenter}}</span><a href="{% url 'bumble.bumbl.views.entry' entry.path|urlify_path %}#{{c.id}}" class="comment-date" name="{{c.id}}">{{c.created}}</a><span class="comment-text">{{c.text}}</span></li>
+            <li class="comment"><span class="commenter">{{c.commenter}}</span><a href="{% url 'entry' entry.path|urlify_path %}#{{c.id}}" class="comment-date" name="{{c.id}}">{{c.created}}</a><span class="comment-text">{{c.text}}</span></li>
         {% endfor %}
     </ul>
     {% if entry.commentsOn %}
@@ -63,6 +63,6 @@
 
 {% block descendents %}
     {% for d in descendents %}
-		<li class="descendent"><a href="{% url 'bumble.bumbl.views.entry' d.path|urlify_path %}" class="descendent-link">{{d.title}}<span class="descendent-date">{{d.created}}</span></a><span class="descendent-lead">{{d.lead|filepaths|md|safe}}</span></li>
+		<li class="descendent"><a href="{% url 'entry' d.path|urlify_path %}" class="descendent-link">{{d.title}}<span class="descendent-date">{{d.created}}</span></a><span class="descendent-lead">{{d.lead|filepaths|md|safe}}</span></li>
 	{% endfor %}
 {% endblock %}

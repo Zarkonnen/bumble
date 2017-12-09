@@ -1,8 +1,8 @@
 from django import template
 from django.core.urlresolvers import reverse
 import re
-from bumble.bumbl.models import File, Tag
-from bumble import settings
+from ..models import File, Tag
+from django.conf import settings
 import markdown
 
 register = template.Library()
@@ -24,7 +24,7 @@ register.filter("filepaths", filepaths)
 def tagslist(value):
     tags = sorted(Tag.objects.all(), key=lambda tag: -tag.num_members())
     l = '<div class="tagslist">' +\
-        '\n'.join('<a href="{url}" class="listtag"><span class="tagtitle">{title}</span> <span class="tagsize">{size}</span></a>'.format(url=reverse("bumble.bumbl.views.entry", args=["tag/" + tag.name]), title=tag.nice_title(), size=tag.num_members()) for tag in tags) +\
+        '\n'.join('<a href="{url}" class="listtag"><span class="tagtitle">{title}</span> <span class="tagsize">{size}</span></a>'.format(url=reverse("entry", args=["tag/" + tag.name]), title=tag.nice_title(), size=tag.num_members()) for tag in tags) +\
         '</div>'
     return value.replace("{{tagslist}}", l)
 
