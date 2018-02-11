@@ -111,7 +111,7 @@ class Entry(models.Model):
         return self.title
     class Meta:
         verbose_name_plural = "entries"
-        ordering = ["title"]
+        ordering = ["-created"]
 
 class Redirect(models.Model):
     redirect_from = models.CharField(max_length=1000, help_text="""Path format: starting slash, no trailing slash. Example: "/foo".""")
