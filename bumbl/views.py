@@ -57,6 +57,7 @@ def entry(request, path):
             author_name=settings.FEED_AUTHOR_NAME,
             author_email=settings.FEED_AUTHOR_EMAIL,
             author_link=settings.FEED_AUTHOR_LINK,
+            categories=[t.title for t in e.tags.all()]
             )
     if path.endswith("/feed"):
         path = path[0:-len("/feed")]
