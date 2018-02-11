@@ -11,7 +11,8 @@ A server with Apache, Python 3 (and the ability to install Python packages) and 
 
 ### Development installation
 * Download or clone Bumble
-* Initialise a virtual environment: `python3 -m venv venv`
+* Initialise and activate a virtual environment: `python3 -m venv venv && source venv/bin/activate`
+* Make sure your version of pip is at least 9.0.1
 * Install the required packages using pip: `pip install -r requirements.txt`
 * Then, export the following environment variables:
 * `export DJANGO_SETTINGS_MODULE=bumble.local_settings`
@@ -22,6 +23,7 @@ A server with Apache, Python 3 (and the ability to install Python packages) and 
 
 ### Deployment
 * Download or clone Bumble into a suitable location on the server.
+* Make sure your version of pip is at least 9.0.1.
 * Install the required packages using pip: `pip install -r requirements.txt`.
 * [Set up mod_wsgi](http://ericholscher.com/blog/2008/jul/8/setting-django-and-mod_wsgi/) to point to the Bumble install.
 * Edit local_settings.py and change the following things:
