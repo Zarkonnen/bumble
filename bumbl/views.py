@@ -3,12 +3,11 @@ from .models import Entry, Tag, Redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from .settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
-import json
+import json, re, requests
 from django.conf import settings
 from django.utils.html import escape
 from .templatetags.tags import filepaths, md, ensure_trailing_slash, urlify_path
 from .forms import CommentForm
-import requests
 from django.utils import formats
 from django.core.mail import send_mail, mail_admins
 from django.utils.timezone import now
@@ -46,21 +45,44 @@ def entry(request, path):
     except:
         pass
     path = normalize_path(path)
+    def add_feed_entry(feed, e):
+        feed.add_item(
+            title=e.title,
+            description=md(filepaths(e.lead)),
+            link=entry_url(e.path),
+            pubdate=e.created,
+            updateddate=e.created,
+            content=force_text(md(filepaths(e.all_content)), strings_only=True),
+            base_content=force_text(md(filepaths(e.content)), strings_only=True),
+            author_name=settings.FEED_AUTHOR_NAME,
+            author_email=settings.FEED_AUTHOR_EMAIL,
+            author_link=settings.FEED_AUTHOR_LINK,
+            )
     if path.endswith("/feed"):
         path = path[0:-len("/feed")]
         if "/tag/" in path:
             path, tags = path.split("/tag/")
             entry = get_entry(path, request)
-            feed = BumbleFeed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
+            feed = BumbleFeed(
+                title=entry.title + ":" + tags,
+                description=tags,
+                link=entry_url(path) + "tag/" + tags,
+                feed_url=entry_url(path) + "tag/" + tags + "/feed"
+                )
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
-                feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created, content=force_text(e.all_content, strings_only=True), base_content=force_text(e.content, strings_only=True))
+                add_feed_entry(feed, e)
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
         entry = get_entry(path, request)
-        feed = BumbleFeed(title=entry.title, description=entry.lead, link=entry_url(path))
+        feed = BumbleFeed(
+            title=entry.title,
+            description=entry.lead,
+            link=entry_url(path),
+            feed_url=entry_url(path) + "/feed"
+            )
         entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
         for e in entries:
-            feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created, content=force_text(e.all_content, strings_only=True), base_content=force_text(e.content, strings_only=True))
+            add_feed_entry(feed, e)
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")
