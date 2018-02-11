@@ -24,6 +24,8 @@ class Tag(models.Model):
         return len(self.entries.all())
     def __str__(self):
         return self.name
+    class Meta:
+        ordering = ["name"]
 
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -109,6 +111,7 @@ class Entry(models.Model):
         return self.title
     class Meta:
         verbose_name_plural = "entries"
+        ordering = ["title"]
 
 class Redirect(models.Model):
     redirect_from = models.CharField(max_length=1000, help_text="""Path format: starting slash, no trailing slash. Example: "/foo".""")
