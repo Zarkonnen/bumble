@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Entry, Tag, Redirect
-from django.utils.feedgenerator import Atom1Feed
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from .settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
@@ -13,6 +12,8 @@ import requests
 from django.utils import formats
 from django.core.mail import send_mail, mail_admins
 from django.utils.timezone import now
+from django.utils.encoding import force_text
+from .feed import BumbleFeed
 
 def normalize_path(path):
     if path.endswith('/'):
@@ -50,16 +51,16 @@ def entry(request, path):
         if "/tag/" in path:
             path, tags = path.split("/tag/")
             entry = get_entry(path, request)
-            feed = Atom1Feed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
+            feed = BumbleFeed(title=entry.title + ":" + tags, description=tags, link=entry_url(path) + "tag/" + tags)
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
-                feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
+                feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created, content=force_text(e.all_content, strings_only=True), base_content=force_text(e.content, strings_only=True))
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
         entry = get_entry(path, request)
-        feed = Atom1Feed(title=entry.title, description=entry.lead, link=entry_url(path))
+        feed = BumbleFeed(title=entry.title, description=entry.lead, link=entry_url(path))
         entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
         for e in entries:
-            feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created)
+            feed.add_item(title=e.title, description=md(filepaths(e.lead)), link=entry_url(e.path), pubdate=e.created, content=force_text(e.all_content, strings_only=True), base_content=force_text(e.content, strings_only=True))
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")

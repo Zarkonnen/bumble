@@ -84,6 +84,9 @@ class Entry(models.Model):
             l.append(e.section_content)
             e = e.parent
         return "\n\n".join(l[::-1])
+    @property
+    def all_content(self):
+        return self.lead + self.calculate_total_section_content() + self.content
     def sorted_comments(self):
         return self.comment_set.order_by('created')
     @property
