@@ -1,4 +1,4 @@
-from .models import Entry, Tag, File, Comment, Redirect
+from .models import Entry, Tag, File, Comment, Redirect, RawEntry
 from django.contrib import admin
 
 class EntryAdmin(admin.ModelAdmin):
@@ -9,3 +9,4 @@ admin.site.register(Tag)
 admin.site.register(File)
 admin.site.register(Comment)
 admin.site.register(Redirect)
+admin.site.register(RawEntry)

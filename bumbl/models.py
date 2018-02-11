@@ -121,3 +121,13 @@ class Redirect(models.Model):
         if self.permanent:
             return self.redirect_from + " => " + self.redirect_to
         return self.redirect_from + " -> " + self.redirect_to
+
+class RawEntry(models.Model):
+    path=models.CharField(max_length=1000)
+    content=models.TextField(blank=True)
+    content_type=models.CharField(max_length=1000, default="text/html")
+    def __str__(self):
+        return self.path
+    class Meta:
+        verbose_name_plural="raw entries"
+        ordering=["path"]

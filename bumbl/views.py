@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Entry, Tag, Redirect
+from .models import Entry, Tag, Redirect, RawEntry
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from .settings import PAGINATION, RECAPTCHA_PUBLIC, RECAPTCHA_PRIVATE
@@ -44,7 +44,6 @@ def entry(request, path):
         return redirect(link=entry_url(redirection.redirect_to), permanent=redirection.permanent)
     except:
         pass
-    path = normalize_path(path)
     def add_feed_entry(feed, e):
         feed.add_item(
             title=e.title,
@@ -59,6 +58,13 @@ def entry(request, path):
             author_link=settings.FEED_AUTHOR_LINK,
             categories=[t.nice_title() for t in e.tags.all()]
             )
+    
+    path = normalize_path(path)
+    try:
+        raw_entry = RawEntry.objects.get(path=path[1:])
+        return HttpResponse(raw_entry.content, content_type=raw_entry.content_type)
+    except RawEntry.DoesNotExist:
+        pass
     if path.endswith("/feed"):
         path = path[0:-len("/feed")]
         if "/tag/" in path:
