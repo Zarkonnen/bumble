@@ -86,7 +86,7 @@ def entry(request, path):
             title=entry.title,
             description=entry.lead,
             link=entry_url(path),
-            feed_url=entry_url(path) + "/feed"
+            feed_url=entry_url(path) + "feed"
             )
         entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
         for e in entries:

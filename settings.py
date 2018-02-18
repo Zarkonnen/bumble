@@ -102,8 +102,3 @@ STATIC_URL = '/static/'
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
 FILE_UPLOAD_PERMISSIONS=0o644
-
-# Feed Settings
-FEED_AUTHOR_NAME = None
-FEED_AUTHOR_EMAIL = None
-FEED_AUTHOR_LINK = None

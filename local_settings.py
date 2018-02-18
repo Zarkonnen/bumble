@@ -37,3 +37,8 @@ MEDIA_URL = '/static/media/'
 # EMAIL_HOST_PASSWORD = '???'
 # DEFAULT_FROM_EMAIL = '???'
 # SERVER_EMAIL = '???'
+
+# Feed Settings
+FEED_AUTHOR_NAME = None
+FEED_AUTHOR_EMAIL = None
+FEED_AUTHOR_LINK = None
