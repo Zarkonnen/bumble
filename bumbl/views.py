@@ -44,15 +44,16 @@ def entry(request, path):
         return redirect(link=entry_url(redirection.redirect_to), permanent=redirection.permanent)
     except:
         pass
-    def add_feed_entry(feed, e):
+    def extract_lead_and_content(e):
+        return e.lead + ' ' + e.content
+    def add_feed_entry(feed, e, extract_content):
         feed.add_item(
             title=e.title,
             description=md(filepaths(e.lead)),
             link=entry_url(e.path),
             pubdate=e.created,
             updateddate=e.created,
-            content=force_text(md(filepaths(e.all_content)), strings_only=True),
-            base_content=force_text(md(filepaths(e.content)), strings_only=True),
+            content=force_text(md(filepaths(extract_content(e))), strings_only=True),
             author_name=settings.FEED_AUTHOR_NAME,
             author_email=settings.FEED_AUTHOR_EMAIL,
             author_link=settings.FEED_AUTHOR_LINK,
@@ -78,7 +79,7 @@ def entry(request, path):
                 )
             entries = get_tag_entries(tags.split("+"), path)
             for e in entries:
-                add_feed_entry(feed, e)
+                add_feed_entry(feed, e, extract_lead_and_content)
             return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
         entry = get_entry(path, request)
         feed = BumbleFeed(
@@ -89,7 +90,7 @@ def entry(request, path):
             )
         entries = Entry.objects.filter(path__startswith=path+'/', created__lte=now()).order_by("-created")
         for e in entries:
-            add_feed_entry(feed, e)
+            add_feed_entry(feed, e, extract_lead_and_content)
         return HttpResponse(feed.writeString("UTF-8"), content_type="application/atom+xml")
     if "/tag/" in path:
         entry_path, tags = path.split("/tag/")

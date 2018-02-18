@@ -5,5 +5,3 @@ class BumbleFeed(Atom1Feed):
         super().add_item_elements(handler, item)
         if item['content'] is not None:
             handler.addQuickElement("content", item['content'], {"type": "html"})
-        if item['base_content'] is not None:
-            handler.addQuickElement("base_content", item['base_content'], {"type": "html"})
