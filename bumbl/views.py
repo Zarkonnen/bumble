@@ -123,7 +123,10 @@ def entry(request, path):
                 new_comment.entry = e
                 new_comment.ip = request.META['REMOTE_ADDR']
                 new_comment.save()
-                mail_admins("New comment by " + new_comment.commenter, new_comment.text, html_message="<html><body><a href=\"" + entry_url(path) + "#" + str(new_comment.id) + "\">" + new_comment.commenter + "</a><br>" + new_comment.text + "</body></html>")
+                try:
+                    mail_admins("New comment by " + new_comment.commenter, new_comment.text, html_message="<html><body><a href=\"" + entry_url(path) + "#" + str(new_comment.id) + "\">" + new_comment.commenter + "</a><br>" + new_comment.text + "</body></html>")
+                except:
+                    pass
                 return HttpResponseRedirect(request.path)
     else:
         form = CommentForm()
