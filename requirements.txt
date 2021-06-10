@@ -1,6 +1,6 @@
 certifi==2017.7.27.1
 chardet==3.0.4
-Django==1.11.29
+Django==2.2.24
 idna==2.6
 Markdown==2.6.9
 requests==2.20.0
