@@ -5,4 +5,4 @@ idna==2.6
 Markdown==2.6.9
 requests==2.20.0
 urllib3==1.26.5
-wheel==0.36.0
+wheel==0.38.1
